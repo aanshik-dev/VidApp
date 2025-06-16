@@ -7,7 +7,7 @@
 body {
   font-family: Arial, sans-serif;
   background-color: #1e003a;
-  background: url('../assets/back1.avif');
+  background: url('assets/back1.avif');
   background-size: cover;
   background-repeat: no-repeat;
 }
