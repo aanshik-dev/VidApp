@@ -588,8 +588,8 @@ async function loadVidList() {
       const thumbBox = document.createElement('div');
       thumbBox.className = 'thumb-box';
       thumbBox.dataset.index = index;
-      thumbBox.innerHTML = `<img class="thumbnail" src="../assets/Null-Image.webp" alt="Loading"
-                      onerror="this.onerror=null; this.src='../assets/Null-Image.webp'">
+      thumbBox.innerHTML = `<img class="thumbnail" src="assets/Null-Image.webp" alt="Loading"
+                      onerror="this.onerror=null; this.src='assets/Null-Image.webp'">
                     <div class="thumb-title">${videoItem.title}</div>`;
       list.appendChild(thumbBox);
     });
