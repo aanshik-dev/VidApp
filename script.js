@@ -693,3 +693,4 @@ vid.addEventListener('error', () => {
 });
 
 loadVidList();
+back.click();
