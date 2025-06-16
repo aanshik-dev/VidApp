@@ -372,6 +372,8 @@ function keyPress(e) {
       e.preventDefault();
       if (e.ctrlKey) {
         seekVideo(-10);
+      } else if (e.shiftKey) {
+        prev.click();
       } else {
         seekVideo(-5);
       }
@@ -380,6 +382,8 @@ function keyPress(e) {
       e.preventDefault();
       if (e.ctrlKey) {
         seekVideo(10);
+      } else if (e.shiftKey) {
+        next.click();
       } else {
         seekVideo(5);
       }

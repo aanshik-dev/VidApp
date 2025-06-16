@@ -472,7 +472,7 @@ video {
 .select {
   border-radius: 10px;
   background-image: linear-gradient(20deg, rgba(25, 0, 56, 0.9), rgba(64, 0, 142, 0.8), rgba(140, 0, 255, 0.6), rgba(102, 0, 185, 0.7), rgba(196, 17, 255, 0.1));
-  opacity: 0.6;
+  opacity: 0.7;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
 }
