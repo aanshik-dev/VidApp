@@ -685,7 +685,9 @@ function loadVideo(videoItem) {
   vid.querySelector('source').type = videoItem.type;
   vid.load();
   play.click();
+  hideList();
   showControls();
+  play.click();
 }
 
 vid.addEventListener('error', () => {
