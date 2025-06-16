@@ -684,6 +684,7 @@ function loadVideo(videoItem) {
   vid.querySelector('source').src = videoItem.src;
   vid.querySelector('source').type = videoItem.type;
   vid.load();
+  play.click();
   showControls();
 }
 
