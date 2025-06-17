@@ -371,21 +371,21 @@ function keyPress(e) {
     case "ArrowLeft":
       e.preventDefault();
       if (e.ctrlKey) {
-        seekVideo(-10);
+        seekVideo(-5);
       } else if (e.shiftKey) {
         prev.click();
       } else {
-        seekVideo(-5);
+        seekVideo(-10);
       }
       break;
     case "ArrowRight":
       e.preventDefault();
       if (e.ctrlKey) {
-        seekVideo(10);
+        seekVideo(5);
       } else if (e.shiftKey) {
         next.click();
       } else {
-        seekVideo(5);
+        seekVideo(10);
       }
       break;
     case "ArrowUp":
