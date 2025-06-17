@@ -687,7 +687,6 @@ function loadVideo(videoItem) {
   play.click();
   hideList();
   showControls();
-  play.click();
 }
 
 vid.addEventListener('error', () => {
