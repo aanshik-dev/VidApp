@@ -42,6 +42,8 @@ const dur = document.getElementById("duration");
 
 const progress = document.getElementById("progress-bar");
 const progutter = document.getElementById("progress-back");
+const seekDot = document.getElementById("seek-dot");
+const seekTooltip = document.getElementById("seek-tooltip");
 const upnext = document.getElementById('upnext');
 const playlist = document.getElementById('playlist');
 
@@ -308,7 +310,12 @@ function toggleTime() {
   dynamicUpdate();
 }
 
+// ─── Seekbar with dot + tooltip ───
 progutter.addEventListener("click", seek);
+progutter.addEventListener("mousemove", seekHover);
+progutter.addEventListener("mouseleave", seekLeave);
+progutter.addEventListener("mousedown", seekMouseDown);
+
 function seek(e) {
   const rect = progutter.getBoundingClientRect();
   const clickPosition = e.clientX - rect.left;
@@ -317,43 +324,106 @@ function seek(e) {
   if (!isNaN(seekTime)) vid.currentTime = seekTime;
 }
 
-// Media Selection Pipeline (Unified File Parser)
-function processFiles(files) {
-  const videoFiles = Array.from(files).filter(file => file.type.startsWith('video/'));
-  if (videoFiles.length === 0) return;
-
-  // Sort files alphabetically
-  videoFiles.sort((a, b) => a.name.localeCompare(b.name));
-
-  vidData = videoFiles.map(file => ({
-    src: URL.createObjectURL(file),
-    title: file.name.replace(/\.[^/.]+$/, ""),
-    type: file.type
-  }));
-
-  loadVidList();
+function seekHover(e) {
+  const rect = progutter.getBoundingClientRect();
+  const pos = (e.clientX - rect.left) / rect.width;
+  const clampedPos = Math.max(0, Math.min(1, pos));
+  if (seekTooltip && !isNaN(vid.duration)) {
+    seekTooltip.textContent = formatTime(clampedPos * vid.duration);
+    seekTooltip.style.left = `${clampedPos * 100}%`;
+  }
 }
 
-// Click to Select Actions (Supports Selecting Multiple Files Simultaneously)
+function seekLeave() {
+  progutter.classList.remove("seeking");
+}
+
+let isSeeking = false;
+function seekMouseDown(e) {
+  isSeeking = true;
+  progutter.classList.add("seeking");
+  document.addEventListener("mousemove", seekDrag);
+  document.addEventListener("mouseup", seekMouseUp);
+}
+
+function seekDrag(e) {
+  if (!isSeeking) return;
+  const rect = progutter.getBoundingClientRect();
+  const pos = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+  if (!isNaN(vid.duration)) vid.currentTime = pos * vid.duration;
+}
+
+function seekMouseUp() {
+  isSeeking = false;
+  progutter.classList.remove("seeking");
+  document.removeEventListener("mousemove", seekDrag);
+  document.removeEventListener("mouseup", seekMouseUp);
+}
+
 selectVideo.addEventListener('click', () => {
-  const fileInput = document.createElement('input');
-  fileInput.type = 'file';
-  fileInput.accept = 'video/*';
-  fileInput.multiple = true;
-  fileInput.addEventListener('change', (e) => processFiles(e.target.files));
-  fileInput.click();
+  try {
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = 'video/*';
+
+    fileInput.addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+
+      if (!file) return;
+
+      vidData = [{
+        src: URL.createObjectURL(file),
+        title: file.name.replace(/\.[^/.]+$/, ""), // Remove extension
+        type: file.type
+      }];
+
+      await loadVidList();
+    });
+    fileInput.click();
+  } catch (error) {
+    console.error('Error selecting video:', error);
+    alert('Failed to select video. See console for details.');
+  }
 });
 
-selectFolder.addEventListener('click', () => {
-  const fileInput = document.createElement('input');
-  fileInput.type = 'file';
-  fileInput.webkitdirectory = true;
-  fileInput.multiple = true;
-  fileInput.addEventListener('change', (e) => processFiles(e.target.files));
-  fileInput.click();
+selectFolder.addEventListener('click', async () => {
+  try {
+    // Create file input element
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.multiple = true;
+    fileInput.accept = 'video/*';
+
+    fileInput.addEventListener('change', async (e) => {
+      const files = Array.from(e.target.files);
+
+      // Clear existing data
+      vidData = [];
+
+      // Add new videos to vidData
+      files.forEach(file => {
+        const videoUrl = URL.createObjectURL(file);
+        vidData.push({
+          src: videoUrl,
+          title: file.name.replace(/\.[^/.]+$/, ""), // Remove extension
+          type: file.type
+        });
+      });
+
+      // Load the video list
+      await loadVidList();
+    });
+
+    // Trigger file dialog
+    fileInput.click();
+  } catch (error) {
+    console.error('Error selecting videos:', error);
+    alert('Failed to select videos. See console for details.');
+  }
 });
 
 // Drag & Drop Listeners
+// ─── Drag & Drop with animations ───
 ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
   dropZone.addEventListener(eventName, e => {
     e.preventDefault();
@@ -361,7 +431,23 @@ selectFolder.addEventListener('click', () => {
   }, false);
 });
 
+dropZone.addEventListener('dragenter', () => {
+  dropZone.classList.add('drag-over');
+});
+dropZone.addEventListener('dragover', () => {
+  dropZone.classList.add('drag-over');
+});
+dropZone.addEventListener('dragleave', (e) => {
+  // Only remove if actually leaving the drop zone
+  if (!dropZone.contains(e.relatedTarget)) {
+    dropZone.classList.remove('drag-over');
+  }
+});
+
 dropZone.addEventListener('drop', (e) => {
+  dropZone.classList.remove('drag-over');
+  dropZone.classList.add('drop-flash');
+  dropZone.addEventListener('animationend', () => dropZone.classList.remove('drop-flash'), { once: true });
   if (e.dataTransfer && e.dataTransfer.files.length > 0) {
     processFiles(e.dataTransfer.files);
   }
@@ -412,6 +498,10 @@ function prevNext() {
     setNext(false);
     setPrev(false);
   }
+  // Highlight active thumb
+  document.querySelectorAll('.thumb-box').forEach((box, i) => {
+    box.classList.toggle('active-thumb', i === currentVideo);
+  });
 }
 
 function setVideo() {

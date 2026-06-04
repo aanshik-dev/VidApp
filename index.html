@@ -74,15 +74,15 @@
 
             <div class="select w-full p-2" id="drop-zone">
               <div
-                class="border-dashed items-center border-6 border-[#c59aff35] w-full rounded-[16px] p-5 flex flex-col items-center">
-                <div class="icon text-white drag">
+                class="drop-inner border-dashed items-center border-6 border-[#c59aff35] w-full rounded-[16px] p-5 flex flex-col items-center">
+                <div class="icon text-white drag drop-arrow">
                   <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
                     <path d="M0 0h24v24H0z" fill="none" />
                     <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
                       stroke-width="2" d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2M7 9l5-5l5 5m-5-5v12" />
                   </svg>
                 </div>
-                <p class="text-[#c79dff] pt-5 text-xl">Drag and drop video files here</p>
+                <p class="text-[#c79dff] pt-5 text-xl drop-label">Drag and drop video files here</p>
               </div>
             </div>
           </div>
@@ -336,10 +336,16 @@
             </div>
           </div>
 
+          <!-- SEEKBAR -->
           <div class="progress">
             <div class="time" id="current">00:00</div>
             <div class="progress-back" id="progress-back">
-              <div class="progress-bar" id="progress-bar"></div>
+              <div class="progress-bar" id="progress-bar">
+                <!-- The glowing dot at the playhead -->
+                <div class="seek-dot" id="seek-dot"></div>
+              </div>
+              <!-- Seek time tooltip -->
+              <div class="seek-tooltip" id="seek-tooltip">0:00</div>
             </div>
             <div class="time" id="duration">00:00</div>
           </div>
