@@ -526,12 +526,36 @@ function loadVidList() {
     thumbBox.dataset.index = index;
     thumbBox.innerHTML = `
       <img class="thumbnail" src="assets/Null-Image.webp" alt="Loading">
-      <div class="thumb-title">${videoItem.title}</div>`;
+      <div class="thumb-title-wrap">
+      <div class="thumb-title">${videoItem.title}</div>
+      </div>
+      `;
     list.appendChild(thumbBox);
   });
 
   setupObserver();
+  // Run marquee check after DOM is ready
+  setTimeout(initMarquees, 100);
 }
+
+// ─── Marquee for overflowing titles ───
+function initMarquees() {
+  document.querySelectorAll('.thumb-box').forEach(box => {
+    const wrap = box.querySelector('.thumb-title-wrap');
+    const title = box.querySelector('.thumb-title');
+    if (!wrap || !title) return;
+
+    const wrapW = wrap.offsetWidth;
+    const titleW = title.scrollWidth;
+
+    if (titleW > wrapW + 4) {
+      title.classList.add('marquee-active');
+      const overflow = titleW - wrapW;
+      title.style.setProperty('--marquee-offset', `-${overflow}px`);
+    }
+  });
+}
+
 
 function setupObserver() {
   if (observer) observer.disconnect();
