@@ -65,7 +65,7 @@ const delay = 300;
 let dir = true;
 let observer;
 
-// Controls Visibility Engine
+
 function showControls() {
   ctrls.style.visibility = 'visible';
   ctrls.style.bottom = '0px';
@@ -211,6 +211,7 @@ vol.addEventListener("click", () => {
   vid.muted = !vid.muted;
   adjustVolume(0);
   volIconSet();
+  hideVolBar();
 });
 vol.addEventListener("mouseenter", showVolBar);
 vol.addEventListener("mouseleave", hideVolBar);
