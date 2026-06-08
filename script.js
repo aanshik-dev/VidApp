@@ -655,8 +655,8 @@ vid.addEventListener('error', () => {
 
 // Key Bindings Matrix Mapping
 function keyPress(e) {
-  if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
   showControls();
+  if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
 
   switch (e.key) {
     case " ":
@@ -680,10 +680,12 @@ function keyPress(e) {
     case "ArrowUp":
       e.preventDefault();
       adjustVolume(0.1);
+      hideVolBar();
       break;
     case "ArrowDown":
       e.preventDefault();
       adjustVolume(-0.1);
+      hideVolBar();
       break;
     case 'm':
     case 'M':
@@ -697,17 +699,26 @@ function keyPress(e) {
       toggleFullscreen(player);
       break;
     case "+":
-    case "=":
       e.preventDefault();
-      adjustSpeed(e.ctrlKey ? 0.25 : 0.05);
+      if (e.ctrlKey) {
+        adjustSpeed(0.25);
+      } else {
+        adjustSpeed(0.05);
+      }
       break;
     case "-":
       e.preventDefault();
-      adjustSpeed(e.ctrlKey ? -0.25 : -0.05);
+      if (e.ctrlKey) {
+        adjustSpeed(-0.25);
+      } else {
+        adjustSpeed(-0.05);
+      }
       break;
     case "*":
       e.preventDefault();
       adjustSpeed(0);
+      break;
+    default:
       break;
   }
   hideControls();
